@@ -105,7 +105,7 @@ export function Shell({
                   </Badge>
                 ))
               ) : (
-                <span className="text-xs opacity-70">No role assigned</span>
+                <span className="text-xs opacity-70">Standard access</span>
               )}
             </div>
           </div>

@@ -69,7 +69,7 @@ function AuthPage() {
   async function signUp(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -77,6 +77,15 @@ function AuthPage() {
         data: { full_name: fullName || email.split("@")[0], role },
       },
     });
+
+    if (!error && data.user?.id) {
+      const name = fullName || email.split("@")[0];
+      await Promise.all([
+        supabase.from("profiles").upsert({ id: data.user.id, full_name: name, email }),
+        supabase.from("user_roles").upsert({ user_id: data.user.id, role }),
+      ]);
+    }
+
     setBusy(false);
     if (error) {
       toast.error(error.message);
